@@ -6,7 +6,7 @@ const bodyparser = require("body-parser");
 const { Configuration, OpenAIApi } = require("openai");
 
 const configuration = new Configuration({
-  apiKey: "",
+  apiKey: "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",
 });
 const openai = new OpenAIApi(configuration);
 
@@ -22,17 +22,12 @@ app.get("/", (req, res) => {
 app.post("/audio", async (req, res) => {
   console.log(req.body); // { filename: 'greater.mp3' }
   const { filename } = req.body;
-  const response = await openai.createCompletion({
-    model: "text-davinci-003",
-    prompt: "Correct this to standard English:\n\nShe no went to the market.",
-    temperature: 0,
-    max_tokens: 60,
-    top_p: 1,
-    frequency_penalty: 0,
-    presence_penalty: 0,
-  });
-  console.log(response.data);
-  res.send(response.data);
+  const resp = await openai.createTranscription(
+    fs.createReadStream(filename),
+    "whisper-1"
+  );
+  console.log(resp);
+  res.send(resp);
 });
 
 app.listen(3000, () => {
